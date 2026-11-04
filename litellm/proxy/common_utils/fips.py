@@ -1,3 +1,4 @@
+import threading
 from collections.abc import Mapping
 from typing import Final
 
@@ -5,6 +6,7 @@ from litellm.secret_managers.main import str_to_bool
 
 FIPS_MODE_SETTING: Final = "fips_mode"
 _SETTING: Final = f"general_settings.{FIPS_MODE_SETTING}"
+_FIPS_MODE_ACTIVE: Final = threading.Event()
 
 
 class FipsModeError(Exception):
@@ -84,7 +86,17 @@ def fips_mode_refusal(general_settings: Mapping[str, object]) -> str | None:
 
 
 def enforce_fips_mode(general_settings: Mapping[str, object]) -> None:
-    """Raise FipsModeError with the fips_mode_refusal reason, if there is one."""
+    """Raise FipsModeError with the fips_mode_refusal reason, if there is one. Otherwise record whether
+    general_settings.fips_mode is on, for fips_mode_active."""
     refusal: Final = fips_mode_refusal(general_settings)
     if refusal is not None:
         raise FipsModeError(refusal)
+    if _fips_mode_setting(general_settings):
+        _FIPS_MODE_ACTIVE.set()
+    else:
+        _FIPS_MODE_ACTIVE.clear()
+
+
+def fips_mode_active() -> bool:
+    """Whether general_settings.fips_mode was on when enforce_fips_mode last accepted it."""
+    return _FIPS_MODE_ACTIVE.is_set()
