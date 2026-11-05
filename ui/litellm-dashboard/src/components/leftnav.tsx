@@ -249,10 +249,11 @@ const menuGroups: MenuGroup[] = [
       {
         key: "skills",
         page: "skills",
-        label: "Skills",
+        label: "Skills Hub",
         icon: <Blocks {...ICON} />,
         roles: [...all_admin_roles, ...internalUserRoles, formatUserRole("org_admin")],
       },
+
       { key: "guardrails", page: "guardrails", label: "Guardrails", icon: <Shield {...ICON} /> },
       {
         key: "policies",
