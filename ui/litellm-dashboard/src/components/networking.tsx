@@ -1,4 +1,3 @@
-import type { SkillListQuery } from "./claude_code_plugins/types";
 // Shared date formatter for daily activity endpoints
 export const formatDate = (date: Date) => {
   const year = date.getFullYear();
@@ -6921,7 +6920,7 @@ export const uploadClaudeCodeSkill = async (
   return apiClient.post("/claude-code/plugins/upload", { accessToken, rawBody: body });
 };
 
-export const listSkillHubSkills = (accessToken: string, query: SkillListQuery) =>
+export const listSkillHubSkills = (accessToken: string, query: { limit: number; offset: number }) =>
   apiClient.get<components["schemas"]["SkillHubList"]>("/skill-hub/skills", { accessToken, query });
 
 export const getSkillHubSkill = (accessToken: string, name: string) =>
